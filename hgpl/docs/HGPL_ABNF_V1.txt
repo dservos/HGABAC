@@ -1,0 +1,24 @@
+policy      = exp [ bool_op policy ]
+            / ( policy )
+exp         = var op var
+            / [ "NOT" ] bool_var
+            / [ "NOT" ] "(" policy ")"
+var         = const / att_name
+bool_var    = boolean / att_name
+op          = ">" / "<" / "=" / ">=" / "<=" / "!=" / "IN" / "SUBSET"
+bool_op     = "AND" / "OR"
+att_name    = user_att_name / object_att_name / env_att_name / admin_att_name / connect_att_name
+user_att_name       = "user." id
+object_att_name     = "object." id
+env_att_name        = "env." id
+admin_att_name      = "admin." id
+connect_att_name    = "connect." id
+atomic      = int / float / string / "NULL"
+const       = atomic / set
+boolean     = "TRUE" / "FALSE" / "UNDEF"
+set         = "{" "}" / "{" setval "}"
+setval      = atomic / atomic "," setval
+id          = +(ALPHA / DIGIT / "_")
+int         = [ "-" ] ( 1-9 ) *( DIGIT ) / "0"
+float       = int "." +( DIGIT )
+string      = DQUOTE *( %x20-21 / %x23-7E ) DQUOTE

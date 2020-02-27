@@ -1,0 +1,48 @@
+policy      = policy "OR" term / term
+term        = term "AND" exp / exp
+exp         = var op var
+            / [ "NOT" ] bool_var
+            / [ "NOT" ] "(" policy ")"
+var         = const / att_name
+bool_var    = boolean / att_name
+op          = ">" / "<" / "=" / ">=" / "<=" / "!=" / "IN" / "SUBSET"
+att_name    = user_att_name / object_att_name / env_att_name / admin_att_name / connect_att_name
+user_att_name       = "user." id
+object_att_name     = "object." id
+env_att_name        = "env." id
+admin_att_name      = "admin." id
+connect_att_name    = "connect." id
+atomic      = int / float / string / "NULL" / boolean
+const       = atomic / set
+boolean     = "TRUE" / "FALSE" / "UNDEF"
+set         = "{" "}" / "{" setval "}"
+setval      = atomic / atomic "," setval
+id          = +(ALPHA / DIGIT / "_")
+int         = [ "-" ] +( DIGIT )
+float       = int "." +( DIGIT )
+string      = DQUOTE *( %x20-21 / %x23-5B / %x5D-7E / %x5C DQUOTE / %x5C %x5C ) DQUOTE
+
+
+
+Order of Operations (First to Last):
+NOT ( ), ( )
+NOT var
+AND
+OR
+
+Notes:
+* Attribute names are case-insensitive
+* Keywords are case-insensitive
+* Whitespace is ignored
+
+TODO V2 (in code):
+* Max/Min var sizes?
+* Add boolean to atomic rule in parsing.py
+* Add \" string rule to lexing.py
+* Rework op and var rules to only allow valid types
+
+TODO V3 (in v3 grammar):
+* Add functions?
+* Add more var types?
+* Add comments
+* Allow math/result of operations (e.g. user.a > 1 + 1 OR user.b < user.a * 2)
